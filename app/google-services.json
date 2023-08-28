@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "150545217262",
+    "project_id": "wadaknedatabase",
+    "storage_bucket": "wadaknedatabase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:150545217262:android:fb01ca28f2c54a32bee5ff",
+        "android_client_info": {
+          "package_name": "com.example.chatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "150545217262-g755h12ogv22fqjovnnisqer44brhqp2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZtDfaCgQ5Vspz9NpU2U7pcmwO4TcdLaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "150545217262-g755h12ogv22fqjovnnisqer44brhqp2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
