@@ -23,7 +23,7 @@ public class SignInActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         preferenceManager=new PreferenceManager(getApplicationContext());
         if (preferenceManager.getBoolean(Constants.KEY_IS_SIGNED_IN)) {
-            Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+            Intent intent=new Intent(getApplicationContext(),HomePageActivity.class);
             startActivity(intent);
             finish();
         }
