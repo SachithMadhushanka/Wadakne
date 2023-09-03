@@ -61,6 +61,8 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.fabNewChat.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), UsersActivity.class)));
+
+        binding.imageBack.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),HomePageActivity.class)));
     }
 
     private void loadUserDetails(){
@@ -160,5 +162,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
     public void onConversionClicked(User user) {
         Intent intent = new Intent(getApplicationContext(), ChatActivity.class);
         intent.putExtra(Constants.KEY_USER,user);
+        startActivity(intent);
+        finish();
     }
 }

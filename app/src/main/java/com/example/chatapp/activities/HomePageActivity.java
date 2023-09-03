@@ -5,53 +5,111 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.widget.Toast;
 
 import com.example.chatapp.R;
+import com.example.chatapp.adapters.RecentConversationAdapter;
 import com.example.chatapp.databinding.ActivityHomePage2Binding;
+import com.example.chatapp.models.ChatMessage;
+import com.example.chatapp.utilities.Constants;
+import com.example.chatapp.utilities.PreferenceManager;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.List;
 
 public class HomePageActivity extends AppCompatActivity {
 
-    ActivityHomePage2Binding binding;
+    com.example.chatapp.databinding.ActivityHomePage2Binding binding;
+    private PreferenceManager preferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityHomePage2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        replaceFragment(new HomeFragment());
+        preferenceManager =new PreferenceManager(getApplicationContext());
+        loadUserDetails();
+        getToken();
+        setListeners();
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home){
-                replaceFragment(new HomeFragment());
+                Intent intent=new Intent(getApplicationContext(),HomePageActivity.class);
+                startActivity(intent);
+                finish();
             } else if (item.getItemId() == R.id.chat) {
                 Intent intent=new Intent(getApplicationContext(),MainActivity.class);
                 startActivity(intent);
                 finish();
+            }else if (item.getItemId() == R.id.search) {
+                Intent intent=new Intent(getApplicationContext(), SearchActivity.class);
+                startActivity(intent);
+                finish();
             } else if (item.getItemId() == R.id.profile) {
-                replaceFragment(new ProfileFragment());
-            } else if (item.getItemId() == R.id.settings) {
-                replaceFragment(new SettingsFragment());
+                Intent intent=new Intent(getApplicationContext(), ProfileActivity.class);
+                startActivity(intent);
+                finish();
+            } else if (item.getItemId() == R.id.addJob) {
+                Intent intent=new Intent(getApplicationContext(), AddJobActivity.class);
+                startActivity(intent);
+                finish();
             }
 
             return true;
         });
     }
 
-    private void replaceFragment(Fragment fragment){
+    private void setListeners(){
+        binding.imageSignOut.setOnClickListener(v -> signOut());
+    }
 
-        // Create new fragment and transaction
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setReorderingAllowed(true);
+    private void loadUserDetails(){
+        binding.textName.setText(preferenceManager.getString(Constants.KEY_NAME));
+        byte[] bytes = android.util.Base64.decode(preferenceManager.getString(Constants.KEY_IMAGE), Base64.DEFAULT);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+        binding.imageProfile.setImageBitmap(bitmap);
+    }
+    private void showToast(String message){
+        Toast.makeText(getApplicationContext(),message,Toast.LENGTH_SHORT).show();
+    }
 
-        // Replace whatever is in the fragment_container view with this fragment
-        transaction.replace(R.id.frame_layout, fragment, null);
-
-        // Commit the transaction
-        transaction.commit();
-
+    private void getToken(){
+        FirebaseMessaging.getInstance().getToken().addOnSuccessListener(this::updateToken);
+    }
+    private void updateToken(String token){
+        preferenceManager.putString(Constants.KEY_FCM_TOKEN,token);
+        FirebaseFirestore database =FirebaseFirestore.getInstance();
+        DocumentReference documentReference=
+                database.collection(Constants.KEY_COLLECTION_USERS).document(
+                        preferenceManager.getString(Constants.KEY_USER_ID)
+                );
+        documentReference.update(Constants.KEY_FCM_TOKEN,token)
+                .addOnFailureListener(e -> showToast("Unable to update token"));
+    }
+    private void signOut(){
+        showToast("Signing out... ");
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        DocumentReference documentReference=
+                database.collection(Constants.KEY_COLLECTION_USERS).document(
+                        preferenceManager.getString(Constants.KEY_USER_ID)
+                );
+        HashMap<String,Object> updates = new HashMap<>();
+        updates.put(Constants.KEY_FCM_TOKEN, FieldValue.delete());
+        documentReference.update(updates)
+                .addOnSuccessListener(unused -> {
+                    preferenceManager.clear();
+                    startActivity(new Intent(getApplicationContext(), SignInActivity.class));
+                    finish();
+                })
+                .addOnFailureListener(e -> showToast("Unable to sign out"));
     }
 }
