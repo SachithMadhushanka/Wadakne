@@ -4,25 +4,33 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.chatapp.R;
+import com.example.chatapp.adapters.JobsAdapter;
 import com.example.chatapp.adapters.RecentConversationAdapter;
+import com.example.chatapp.adapters.UsersAdapter;
 import com.example.chatapp.databinding.ActivityHomePage2Binding;
 import com.example.chatapp.models.ChatMessage;
+import com.example.chatapp.models.User;
 import com.example.chatapp.utilities.Constants;
 import com.example.chatapp.utilities.PreferenceManager;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,15 +39,22 @@ public class HomePageActivity extends AppCompatActivity {
     com.example.chatapp.databinding.ActivityHomePage2Binding binding;
     private PreferenceManager preferenceManager;
 
+    RecyclerView recyclerView;
+    FirebaseFirestore database;
+
+    ArrayList<jobs> list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityHomePage2Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         preferenceManager =new PreferenceManager(getApplicationContext());
+        recyclerView = binding.jobRecyclerView;
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
         loadUserDetails();
         getToken();
         setListeners();
+        getJobs();
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.home){
@@ -66,6 +81,11 @@ public class HomePageActivity extends AppCompatActivity {
 
             return true;
         });
+        
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+
     }
 
     private void setListeners(){
@@ -111,5 +131,46 @@ public class HomePageActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> showToast("Unable to sign out"));
+    }
+    private void loading(Boolean isLoading){
+        if (isLoading){
+            binding.progressBar.setVisibility(View.VISIBLE);
+        }else {
+            binding.progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    private void getJobs() {
+                        FirebaseFirestore database = FirebaseFirestore.getInstance();
+                        database.collection("Job")
+                                .get()
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful() && task.getResult() != null) {
+                                        List<jobs> jobsList = new ArrayList<>();
+                                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()) {
+                                            jobs jobs =new jobs();
+                                            jobs.jobName = queryDocumentSnapshot.getString("Job Name");
+                                            jobs.jobCategory = queryDocumentSnapshot.getString("Category");
+                                            jobs.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
+                                            jobs.jobLocation = queryDocumentSnapshot.getString("Location");
+                                            jobs.name=queryDocumentSnapshot.getString("name");
+                                            jobsList.add(jobs);
+                        }
+                                        if (jobsList.size() > 0){
+                                            JobsAdapter jobsAdapter= new JobsAdapter(jobsList,this);
+                                            binding.jobRecyclerView.setAdapter(jobsAdapter);
+                                            binding.jobRecyclerView.setVisibility(View.VISIBLE);
+
+                        // Now you have a list of jobs. You can do something with it here.
+                                            } else {
+                        // Handle the case where the Firestore query was unsuccessful.
+                    }
+                }});
+    }
+
+    private void showErrorMessage(){
+        binding.textErrorMessage.setText(String.format("%s","No user available"));
+        binding.textErrorMessage.setVisibility(View.VISIBLE);
     }
 }

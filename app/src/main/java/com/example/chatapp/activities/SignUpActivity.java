@@ -124,7 +124,7 @@ public class SignUpActivity extends AppCompatActivity {
             showToast("Enter valid image");
             return false;
         } else if (binding.inputPassword.getText().toString().trim().isEmpty()) {
-            showToast("Enter passeord");
+            showToast("Enter password");
             return false;
         } else if (binding.inputConfirmPassword.getText().toString().trim().isEmpty()) {
             showToast("Confirm your password");

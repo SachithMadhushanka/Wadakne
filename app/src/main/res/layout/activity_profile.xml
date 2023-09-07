@@ -98,7 +98,7 @@
                     android:id="@+id/name"
                     android:layout_weight="1"
                     android:text="@string/name"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold"
                     android:textColor="@color/secondary_text" />
 
@@ -109,7 +109,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:text="@string/name"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textColor="@color/secondary_text" />
 
             </LinearLayout>
@@ -134,7 +134,7 @@
                     android:id="@+id/email"
                     android:layout_weight="1"
                     android:text="@string/email"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold"
                     android:textColor="@color/secondary_text" />
 
@@ -145,7 +145,7 @@
                     android:layout_weight="2"
                     android:textAlignment="viewEnd"
                     android:text="@string/email"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textColor="@color/secondary_text" />
 
             </LinearLayout>
@@ -170,7 +170,7 @@
                     android:id="@+id/password"
                     android:layout_weight="1"
                     android:text="@string/password"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textStyle="bold"
                     android:textColor="@color/secondary_text" />
 
@@ -181,7 +181,7 @@
                     android:layout_weight="1"
                     android:textAlignment="viewEnd"
                     android:text="@string/password"
-                    android:textSize="@dimen/_18ssp"
+                    android:textSize="@dimen/_12ssp"
                     android:textColor="@color/secondary_text" />
 
             </LinearLayout>
