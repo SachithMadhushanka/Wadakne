@@ -14,6 +14,7 @@ import com.example.chatapp.activities.HomePageActivity;
 import com.example.chatapp.activities.jobs;
 import com.example.chatapp.databinding.ItemContainerJobBinding;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.JobsViewHolder> {
@@ -59,6 +60,9 @@ public class JobsAdapter extends RecyclerView.Adapter<JobsAdapter.JobsViewHolder
             binding.jobLocation.setText(jobs.jobLocation);
             binding.imageProfile.setImageBitmap(getUserImage(jobs.image));
         }
+    }
+    public void searchDataList(ArrayList<jobs> searchList){
+
     }
     private Bitmap getUserImage(String encodedImage){
         byte[] bytes = Base64.decode(encodedImage,Base64.DEFAULT);
